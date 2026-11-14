@@ -8,21 +8,23 @@ HERE = Path(__file__).resolve().parent
 
 
 def load_generations(name):
-    """{query id: [hypothetical documents]}, the cache written by generate_colab.ipynb."""
+    """{query id: [hypothetical documents]}, the cache written by generate.py."""
     with gzip.open(HERE / "generations" / f"{name}.jsonl.gz", "rt") as f:
         return {r["qid"]: r["docs"] for r in map(json.loads, f)}
 
 
-def hyde_vectors(model, queries, generations, n=8, with_query=True, query_prefix="", normalize=False):
-    """One vector per query: the mean of its first n hypothetical documents and, as in the paper, of the query."""
-    docs = [d for q in queries for d in generations[q][:n]]
+def embed_generations(model, queries, generations, normalize=False):
+    """Embeddings of every query's hypothetical documents: an array (queries, documents per query, dimensions)."""
+    docs = [d for q in queries for d in generations[q]]
     E = model.encode(docs, batch_size=32, normalize_embeddings=normalize, convert_to_numpy=True)
-    total = E.reshape(len(queries), n, -1).sum(axis=1)
-    if not with_query:
-        return total / n
-    Q = model.encode([query_prefix + t for t in queries.values()], batch_size=32,
-                     normalize_embeddings=normalize, convert_to_numpy=True)
-    return (total + Q) / (n + 1)
+    return E.reshape(len(queries), -1, E.shape[1])
+
+
+def hyde_vectors(E, Q=None, n=8):
+    """One vector per query: the mean of its first n hypothetical documents and, as in the paper, of the query Q."""
+    if Q is None:
+        return E[:, :n].mean(axis=1)
+    return (E[:, :n].sum(axis=1) + Q) / (n + 1)
 
 
 def search(Q, D, qids, ids, k=101):
