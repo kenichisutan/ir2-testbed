@@ -7,9 +7,9 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 
 
-def load_generations(name):
+def load_generations(name, folder="generations"):
     """{query id: [hypothetical documents]}, the cache written by generate.py."""
-    with gzip.open(HERE / "generations" / f"{name}.jsonl.gz", "rt") as f:
+    with gzip.open(HERE / folder / f"{name}.jsonl.gz", "rt") as f:
         return {r["qid"]: r["docs"] for r in map(json.loads, f)}
 
 

@@ -13,3 +13,7 @@ Counter Argument:""",
 Topic: {}
 Passage:""",
 }
+
+# Second run, added after the first results (see reproduce.ipynb, "After the fact"): the same prompts,
+# with this system message and at most 256 tokens, written to generations_plain/.
+PLAIN = "Answer with the passage only: plain text, one paragraph, no heading, no list, no introduction."
