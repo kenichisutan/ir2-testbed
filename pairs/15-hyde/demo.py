@@ -20,6 +20,8 @@ def show_query(name, qid, top_k=5):
     print("=" * 70)
     print(f"[{name}] QID={qid} | Query: {queries[qid]}")
     print(f"Hypothetical Doc #1 (truncated): {' '.join(gens[qid][0].split()[:45])}...")
+    gold = [d for d, g in qrels[qid].items() if g > 0]
+    print(f"Relevant documents ({len(gold)}): {', '.join(gold[:3])}{' ...' if len(gold) > 3 else ''}")
     print("-" * 70)
 
     bge_top = sorted(bge_run[qid], key=bge_run[qid].get, reverse=True)
@@ -34,9 +36,9 @@ def show_query(name, qid, top_k=5):
         bd, hd = bge_top[i], hyde_top[i]
         b_rel = "✓" if qrels[qid].get(bd, 0) > 0 else "✗"
         h_rel = "✓" if qrels[qid].get(hd, 0) > 0 else "✗"
-        b_title = (corpus[bd]["title"] or corpus[bd]["text"])[:26].replace("\n", " ")
-        h_title = (corpus[hd]["title"] or corpus[hd]["text"])[:26].replace("\n", " ")
-        print(f"#{i+1:<4} | {b_rel} [{bd[:6]}] {b_title:<21} | {h_rel} [{hd[:6]}] {h_title:<21}")
+        b_title = (corpus[bd]["text"] if name == "arguana" else corpus[bd]["title"] or corpus[bd]["text"])[:30].replace("\n", " ")
+        h_title = (corpus[hd]["text"] if name == "arguana" else corpus[hd]["title"] or corpus[hd]["text"])[:30].replace("\n", " ")
+        print(f"#{i+1:<4} | {b_rel} {b_title:<30} | {h_rel} {h_title:<30}")
 
 
 def find_examples(name):
