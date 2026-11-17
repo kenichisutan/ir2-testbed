@@ -53,7 +53,6 @@ def run_bm25_and_ce_hyde(folder="generations"):
         expanded_queries = {q: queries[q] + " " + " ".join(gens[q][:8]) for q in queries}
         bm25_hyde = testbed.bm25_search(name, corpus, expanded_queries)
         testbed.save_run(bm25_hyde, TMP_RUNS / "bm25_hyde" / f"{name}.json")
-        # 用原始 query 对 BM25+HyDE 的 top-100 做 Cross-Encoder 重排
         ce_hyde = testbed.rerank(ce_model, corpus, queries, bm25_hyde)
         testbed.save_run(ce_hyde, TMP_RUNS / "ce_bm25_hyde" / f"{name}.json")
         print(f"finished bm25+hyde & ce(bm25+hyde) on {name}")
