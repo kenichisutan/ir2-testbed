@@ -16,6 +16,8 @@ python pairs/15-hyde/generate.py && python pairs/15-hyde/generate.py plain      
 
 Two protocols. `reproduce.ipynb` follows the paper: full documents, dot product. `method.py`, `run_variants.py` and `results_variants/` follow the testbed: first 200 words, cosine. The Contriever scores differ between them for that reason; the notebook section "Same encoder, two protocols" shows the four combinations.
 
+The caches `generations/` and `generations_plain/` (about 14 MB, ArguAna is the largest) are committed on purpose: they are the LLM output every row depends on, and regenerating them takes about 6 hours on Apple silicon.
+
 `results.json` and `results_variants/` were written on one machine. A re-run on another agrees within 0.001 nDCG@10.
 
 AI assistance: Claude (Anthropic) helped write the code and run the experiments. We chose the experiments, checked the numbers and wrote the conclusions. Also declared in the report.
