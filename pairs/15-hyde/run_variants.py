@@ -14,7 +14,7 @@ import hyde
 
 OUT_DIR = HERE / "results_variants"
 OUT_DIR.mkdir(exist_ok=True)
-TMP_RUNS = HERE / "runs_variants"
+TMP_RUNS = HERE / "runs" / "variants"
 
 
 def run_dense_hyde(model_name, folder, prefix="", out_run_dir=None):
