@@ -14,7 +14,7 @@ Run after `python pairs/15-hyde/method.py`, which writes `runs/`:
 ## 2. Failure Query (`arguana` / `test-health-ppelfhwbpba-pro02a`, nDCG@10 -1.000)
 - **Selection**: the largest nDCG@10 loss of HyDE + BGE-small against BGE-small on ArguAna.
 - **Query**: Long argument on personhood at birth and partial-birth abortion.
-- **Why HyDE fails**: BGE-small already ranks the true counter-argument #1. The 400-word hypothetical response adds generic meta-phrasing (*"several counterarguments"*, *"Definition of Personhood"*), diluting the specific argument and pulling generic abortion documents ahead. Length explains most of it for this query: with the plain cache (116 words on average, no formatting) the counter-argument is at rank 2 instead of 19, still below BGE-small alone at rank 1. Over all ArguAna queries HyDE + BGE-small still loses 0.069 with the plain cache (0.129 with the first cache), as BGE-small is already a strong ranker.
+- **Why HyDE fails**: BGE-small already ranks the true counter-argument #1. The 416-word average hypothetical response adds generic meta-phrasing (*"several counterarguments"*, *"Definition of Personhood"*), diluting the specific argument and pulling generic abortion documents ahead. Length explains most of it for this query: with the plain cache (116 words on average, no formatting) the counter-argument is at rank 2 instead of 19, still below BGE-small alone at rank 1. Over all ArguAna queries HyDE + BGE-small still loses 0.069 with the plain cache (0.129 with the first cache), as BGE-small is already a strong ranker.
 
 ## 3. Wildcard Query (Backup: `scifact` / `1`, nDCG@10 +1.000)
 - Ready to run any query ID proposed live from `scifact`, `nfcorpus`, or `arguana` via `python pairs/15-hyde/demo.py <dataset> <qid>`.
