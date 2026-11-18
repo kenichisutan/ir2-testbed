@@ -1,4 +1,5 @@
 import json
+import subprocess
 import sys
 from pathlib import Path
 import numpy as np
@@ -86,3 +87,11 @@ if __name__ == "__main__":
     run_bm25_and_ce_hyde("generations")
     print("4/4 Running Contriever vs Contriever+HyDE...")
     score_contriever()
+    for folder, method, against in [
+        ("bge_plain", "HyDE + BGE-small (plain, N=8)", "bge"),
+        ("minilm_hyde", "HyDE + MiniLM (N=8)", "minilm"),
+        ("bm25_hyde", "BM25 + HyDE (N=8)", "bm25"),
+        ("ce_bm25_hyde", "Cross-Encoder on BM25+HyDE (N=8)", "ce"),
+    ]:
+        subprocess.run([sys.executable, str(ROOT / "testbed.py"), "score", str(TMP_RUNS / folder), "--method", method,
+                        "--pair", "15-hyde", "--against", against, "--out", str(OUT_DIR / f"{folder}.json")], check=True)
