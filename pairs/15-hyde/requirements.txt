@@ -1,4 +1,4 @@
-# Python 3.12. mlx-lm is only needed to regenerate (generate.py, Apple silicon); the caches are committed.
+# Python 3.12. For generate.py and demo_web.py --live (Apple silicon) also: pip install mlx-lm==0.32.2 (needs transformers>=5.7, so use a separate environment).
 bm25s==0.3.16
 datasets==5.1.0
 ipykernel==7.4.0
@@ -14,4 +14,3 @@ scipy==1.18.1
 sentence-transformers==6.2.0
 torch==2.14.1
 transformers==5.3.0
-mlx-lm==0.32.2; sys_platform == "darwin"
