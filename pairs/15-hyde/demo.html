@@ -8,6 +8,7 @@
 :root { --bg: #fafaf7; --fg: #1d1d1b; --quiet: #6b6b66; --line: #dcdcd4; --good: #1f7a3a; --good-bg: #e3f3e7; --bad: #b3261e; --bar: #8fa6c9; }
 @media (prefers-color-scheme: dark) { :root { --bg: #17181a; --fg: #ececea; --quiet: #9a9a94; --line: #34363a; --good: #6fcf8a; --good-bg: #1c3324; --bad: #f2877f; --bar: #4a6590; } }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { margin: 0; padding: 16px; background: var(--bg); color: var(--fg); font: 20px/1.35 system-ui, sans-serif; }
 .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 select, input, button { font: inherit; padding: 6px 10px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; }
