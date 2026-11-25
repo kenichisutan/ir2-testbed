@@ -19,5 +19,6 @@ Run after `python pairs/15-hyde/method.py`, which writes `runs/`:
 ## 3. Wildcard Query (Backup: `scifact` / `1`, nDCG@10 +1.000)
 - Ready to run any query ID proposed live from `scifact`, `nfcorpus`, or `arguana` via `python pairs/15-hyde/demo.py <dataset> <qid>`.
 
-## Fallback Recording
-- Link: `<TODO: add 2-min screen recording link before Wed Nov 25>`
+## Live Page
+- The talk uses `python pairs/15-hyde/demo_web.py` (open http://127.0.0.1:8765): the three queries above as buttons, a search over all test queries, an N slider from 0 to 8 and the two caches. The first start encodes the three corpora (about 9 minutes, kept in `runs/demo/`). With `--live` and `mlx-lm`, a typed SciFact claim gets 8 new hypothetical documents (sampled, seed 0). The page is an illustration and nothing on it is scored.
+- If the page fails, the three `demo.py` commands above print the same rankings (first cache, top 5) in the terminal.
