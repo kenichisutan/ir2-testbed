@@ -1,0 +1,11 @@
+runs*/
+models/
+__pycache__/
+.ipynb_checkpoints/
+reproduction/data/
+reproduction/models/
+archive.zip
+.venv/
+__pycache__/
+.DS_Store
+arxiv-metadata-oai-snapshot.json

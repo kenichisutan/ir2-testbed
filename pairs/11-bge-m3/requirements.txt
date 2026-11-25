@@ -1,0 +1,20 @@
+# versions that produced results*.json (Python 3.13, macOS, PyTorch MPS); pyserini also needs Java 21+
+numpy==2.4.3
+scipy==1.17.1
+scikit-learn==1.8.0
+pandas==3.0.1
+nltk==3.10.3
+rank-bm25==0.2.2
+pytrec-eval-terrier==0.5.11
+torch==2.14.0
+transformers==5.5.0
+sentence-transformers==6.0.1
+sentencepiece==0.2.1
+FlagEmbedding==1.4.2
+faiss-cpu==1.16.0
+pyserini==2.4.0
+install-jdk==1.1.0
+tqdm==4.67.3
+jupyter==1.1.1
+nbconvert==7.17.0
+ipykernel==7.2.0

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BGE-M3 demo</title>
+<style>
+  :root {
+    --paper: #f6f7f9;
+    --ink: #1a2330;
+    --quiet: #5f6a78;
+    --rule: #d9dee4;
+    --spring: #1f6f78;
+    --m3: #6a3fa0;
+    --marker: #ffe45c;
+    --unseen: #b8322a;
+    --serif: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --sans: "Avenir Next", Avenir, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body { margin: 0; color: var(--ink); font: 400 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .page { max-width: 1440px; margin: 0 auto; padding: 28px 40px 48px; }
+
+  /* the claim */
+  .top { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; flex-wrap: wrap; }
+  .title { font-weight: 600; font-size: 17px; }
+  .title span { font-weight: 400; color: var(--quiet); }
+  .time { color: var(--quiet); font-size: 15px; font-variant-numeric: tabular-nums; }
+  form { margin: 14px 0 0; }
+  #q { display: block; width: 100%; font: 400 30px/1.3 var(--serif); color: var(--ink); background: transparent; resize: none; overflow: hidden;
+       border: 0; border-bottom: 2px solid var(--ink); padding: 4px 0 10px; outline: none; }
+  #q::placeholder { color: #a3abb5; }
+  .examples { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-top: 12px; font-size: 16px; color: var(--quiet); }
+  .examples button { color: var(--ink); border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
+  .examples button:hover { border-color: var(--ink); }
+  .examples button[aria-pressed="true"] { border-bottom: 2px solid var(--ink); font-weight: 600; }
+  .legend { margin: 22px 0 0; font-size: 15px; color: var(--quiet); }
+  .legend mark { background: linear-gradient(transparent 12%, var(--marker) 12%, var(--marker) 88%, transparent 88%); color: var(--ink); padding: 0 3px; }
+
+  /* the two systems */
+  .systems { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; margin-top: 26px; }
+  .system h2 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+  .spring h2 { color: var(--spring); }
+  .m3 h2 { color: var(--m3); }
+  .system .what { margin: 0; color: var(--quiet); font-size: 15px; }
+
+  .reads { margin: 14px 0 0; font: 400 20px/1.75 var(--serif); min-height: 1.75em; }
+  .reads .stop { color: #a9b0b9; }
+  .reads .unseen { color: var(--unseen); text-decoration: line-through; text-decoration-thickness: 2px; }
+  .reads .tokword { display: inline-flex; border-radius: 3px; overflow: hidden; vertical-align: baseline; }
+  .reads .piece { padding: 0 3px; }
+  .reads .piece + .piece { border-left: 1.5px solid var(--paper); }
+
+  .methods { display: flex; margin: 18px 0 0; border-bottom: 1px solid var(--rule); }
+  .method { flex: 1; text-align: left; padding: 8px 10px 10px 0; border-bottom: 3px solid transparent; margin-bottom: -1px; color: var(--quiet); }
+  .method .name { display: block; font-size: 14px; white-space: nowrap; }
+  .method .rank { display: block; font-size: 30px; line-height: 1.15; font-weight: 600; font-variant-numeric: tabular-nums; color: #9aa3ae; }
+  .method .rank.miss { font-weight: 400; }
+  .method:hover .name { color: var(--ink); }
+  .spring .method[aria-selected="true"] { border-color: var(--spring); color: var(--ink); }
+  .spring .method[aria-selected="true"] .rank { color: var(--spring); }
+  .m3 .method[aria-selected="true"] { border-color: var(--m3); color: var(--ink); }
+  .m3 .method[aria-selected="true"] .rank { color: var(--m3); }
+
+  ol { list-style: none; margin: 4px 0 0; padding: 0; }
+  li { display: grid; grid-template-columns: 2.2em 1fr; padding: 9px 0; border-bottom: 1px solid var(--rule); cursor: pointer; }
+  li .n { color: var(--quiet); font-variant-numeric: tabular-nums; padding-top: 2px; font-size: 15px; }
+  li .t { font: 400 18px/1.4 var(--serif); }
+  li.answer .t span { background: linear-gradient(transparent 10%, var(--marker) 10%, var(--marker) 90%, transparent 90%);
+                      box-decoration-break: clone; -webkit-box-decoration-break: clone; padding: 0 2px; }
+  li .x { display: none; grid-column: 2; margin-top: 6px; font-size: 15px; color: var(--quiet); line-height: 1.5; max-width: 70ch; }
+  li.open .x { display: block; }
+  li b { font-weight: 600; color: var(--ink); }
+  .missing { padding: 12px 0 0 2.2em; font: italic 400 17px/1.4 var(--serif); color: var(--quiet); }
+  .missing strong { font-style: normal; font-weight: 600; color: var(--ink); }
+
+  .empty, .error { margin-top: 40px; color: var(--quiet); font-size: 18px; }
+  .error code { font-size: 15px; color: var(--ink); }
+
+  @media (max-width: 960px) { .methods { overflow-x: auto; } .method { flex: 0 0 auto; padding-right: 22px; } .systems { grid-template-columns: 1fr; gap: 40px; } .page { padding: 20px 16px 40px; } #q { font-size: 24px; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="top">
+    <div class="title">BGE-M3 against the spring pipeline <span>on SciFact, 5,183 abstracts</span></div>
+    <div class="time" id="time"></div>
+  </div>
+
+  <form id="form">
+    <textarea id="q" rows="1" autocomplete="off" spellcheck="false" aria-label="Claim"
+              placeholder="Type a claim, in any language"></textarea>
+  </form>
+  <div class="examples" id="examples"></div>
+
+  <p class="legend" id="legend" hidden><mark>Highlighted</mark> is the abstract SciFact marks as the answer. The number under each method is where that method ranks it.</p>
+
+  <div id="body"><p class="empty">Type a claim and press Enter, or pick one of the examples.</p></div>
+</main>
+
+<template id="systems">
+  <div class="systems">
+    <section class="system spring" data-side="spring">
+      <h2>Spring pipeline</h2>
+      <p class="what">BM25 and MiniLM, fused with RRF</p>
+      <p class="reads" aria-label="How BM25 reads the claim"></p>
+      <div class="methods" role="tablist"></div>
+      <ol></ol>
+    </section>
+    <section class="system m3" data-side="m3">
+      <h2>BGE-M3</h2>
+      <p class="what">One encoder, three ways to score</p>
+      <p class="reads" aria-label="How BGE-M3 splits and weights the claim"></p>
+      <div class="methods" role="tablist"></div>
+      <ol></ol>
+    </section>
+  </div>
+</template>
+
+<script>
+const SIDES = {
+  spring: { methods: [["rrf", "RRF"], ["bm25", "BM25"], ["minilm", "MiniLM"]], pick: "rrf" },
+  m3: { methods: [["all", "All three"], ["dense", "Dense"], ["sparse", "Sparse"], ["multi-vec", "Multi-vector"], ["dense+sparse", "Dense + sparse"]], pick: "all" },
+};
+// how far each method's list reaches, for the sentence under a list that misses the answer
+const REACH = { rrf: "its top 100", bm25: "its top 100", minilm: "its top 100", all: "the 200 dense candidates it re-scores",
+                "multi-vec": "the 200 dense candidates it re-scores", "dense+sparse": "the dense and sparse top 1,000", dense: "", sparse: "" };
+const KEYS = { a: "all", d: "dense", s: "sparse", m: "multi-vec", h: "dense+sparse" };
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let data = null, examples = [];
+const $ = s => document.querySelector(s);
+
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function bold(text, words) {
+  if (!words.length) return esc(text);
+  const re = new RegExp("\\b(" + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")\\b", "gi");
+  return esc(text).replace(re, "<b>$1</b>");
+}
+const ordinal = n => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th");
+
+function readsSpring(words) {
+  return words.map((w, i) => {
+    const gap = i && w.s !== "punct" ? " " : "";
+    if (w.s === "punct") return esc(w.w);
+    const tip = w.s === "unseen" ? "no abstract contains this word" : w.s === "stop" ? "dropped as a stop word" : "";
+    return `${gap}<span class="${w.s}" title="${tip}">${esc(w.w)}</span>`;
+  }).join("");
+}
+// pieces of one word sit together in one block, split by hairlines; shade = sparse weight
+function readsM3(pieces) {
+  const words = [];
+  pieces.forEach(p => (p.new || !words.length ? words.push([p]) : words[words.length - 1].push(p)));
+  return words.map(w => `<span class="tokword">${w.map(p =>
+    `<span class="piece" style="background:rgba(106,63,160,${(0.07 + 0.43 * p.w).toFixed(2)})" title="sparse weight ${p.w}">${esc(p.p)}</span>`).join("")}</span>`).join(" ");
+}
+
+function renderMethods(side) {
+  const el = $(`[data-side="${side}"] .methods`);
+  el.innerHTML = SIDES[side].methods.map(([key, name]) => {
+    const r = data.target ? data.ranks[key] : undefined;
+    const rank = r === undefined ? "" : `<span class="rank ${r == null ? "miss" : ""}">${r == null ? "–" : r}</span>`;
+    return `<button class="method" role="tab" data-key="${key}" aria-selected="${key === SIDES[side].pick}">
+      <span class="name">${name}</span>${rank}</button>`;
+  }).join("");
+  el.querySelectorAll(".method").forEach(b => b.onclick = () => pick(side, b.dataset.key));
+}
+
+function renderList(side, animate) {
+  const ol = $(`[data-side="${side}"] ol`);
+  const key = SIDES[side].pick;
+  const before = animate ? Object.fromEntries([...ol.children].filter(li => li.dataset.id).map(li => [li.dataset.id, li.getBoundingClientRect().top])) : {};
+  ol.innerHTML = data.lists[key].map((id, i) => {
+    const d = data.docs[id];
+    return `<li data-id="${id}" class="${d.relevant ? "answer" : ""}">
+      <span class="n">${i + 1}</span><span class="t"><span>${bold(d.title, d.match)}</span></span>
+      <span class="x">${bold(d.text, d.match)}…</span></li>`;
+  }).join("");
+  const r = data.ranks[key];
+  if (data.target && !(r && r <= data.lists[key].length)) {
+    const where = r ? `<strong>${ordinal(r)}</strong> here.` : `not in ${REACH[key]}.`;
+    ol.insertAdjacentHTML("beforeend", `<div class="missing">The highlighted abstract is ${where}</div>`);
+  }
+  ol.querySelectorAll("li").forEach(li => li.onclick = () => li.classList.toggle("open"));
+  if (!animate || reduceMotion) return;
+  ol.querySelectorAll("li").forEach(li => {
+    const was = before[li.dataset.id];
+    if (was === undefined) {
+      li.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: "ease-out" });
+    } else {
+      const dy = was - li.getBoundingClientRect().top;
+      if (dy) li.animate([{ transform: `translateY(${dy}px)` }, { transform: "none" }], { duration: 550, easing: "cubic-bezier(.2,.7,.2,1)" });
+    }
+  });
+}
+
+function pick(side, key) {
+  SIDES[side].pick = key;
+  renderMethods(side);
+  renderList(side, true);
+}
+
+function render() {
+  $("#body").innerHTML = "";
+  $("#body").append($("#systems").content.cloneNode(true));
+  $('[data-side="spring"] .reads').innerHTML = readsSpring(data.bm25_words);
+  $('[data-side="m3"] .reads').innerHTML = readsM3(data.m3_pieces);
+  for (const side of ["spring", "m3"]) { renderMethods(side); renderList(side, false); }
+  $("#legend").hidden = !data.target;
+  $("#time").textContent = `Searched in ${(data.ms / 1000).toFixed(2)} s`;
+}
+
+async function run(text) {
+  $("#q").value = text;
+  fit();
+  document.querySelectorAll(".examples button").forEach(b => b.setAttribute("aria-pressed", b.dataset.text === text));
+  $("#time").textContent = "Searching";
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(text)}`);
+    data = await res.json();
+    render();
+  } catch (e) {
+    $("#time").textContent = "";
+    $("#body").innerHTML = `<p class="error">The demo server isn't answering. Start it with <code>python pairs/11-bge-m3/demo.py --web</code> and reload.</p>`;
+  }
+}
+
+(async () => {
+  try { examples = await (await fetch("/api/presets")).json(); } catch (e) { return; }
+  $("#examples").innerHTML = "Try " + examples.map(p =>
+    `<button data-text="${esc(p.text)}" aria-pressed="false">${esc(p.label)}</button>`).join("");
+  document.querySelectorAll(".examples button").forEach(b => b.onclick = () => run(b.dataset.text));
+})();
+
+$("#form").onsubmit = e => { e.preventDefault(); const t = $("#q").value.trim(); if (t) run(t); };
+const fit = () => { $("#q").style.height = "auto"; $("#q").style.height = $("#q").scrollHeight + "px"; };
+$("#q").addEventListener("input", fit);
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("#form").requestSubmit(); } });
+document.addEventListener("keydown", e => {
+  if (e.target === $("#q")) { if (e.key === "Escape") $("#q").blur(); return; }
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === "/") { e.preventDefault(); $("#q").focus(); $("#q").select(); return; }
+  const ex = examples.find(p => p.key === e.key);
+  if (ex) return run(ex.text);
+  if (data && KEYS[e.key.toLowerCase()]) pick("m3", KEYS[e.key.toLowerCase()]);
+});
+</script>
+</body>
+</html>

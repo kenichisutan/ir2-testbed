@@ -66,7 +66,9 @@ See `pairs/00-beyond-abstracts` for a complete example.
 | `method.py` | your method on the testbed |
 | `results.json` | written by `testbed.py score` |
 | `demo.md` | the three demo queries and the link to the fallback recording |
-| `slides.pdf`, `report.pdf` | the talk and the report |
+| `slides.pdf` | the talk |
+
+The report does not go in the repo. Upload it as a PDF on the [submission page](https://gerdes.fr/inforet/submit/), where only your pair and the instructor read it.
 
 ## `results.json`
 

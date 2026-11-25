@@ -1,0 +1,84 @@
+{
+ "pair": "10_GPL",
+ "method": "genq_BGE (eval_base_neg30) vs bge",
+ "datasets": {
+  "scifact": {
+   "n_queries": 300,
+   "ndcg10": 0.6713,
+   "recall100": 0.946,
+   "baseline": {
+    "name": "bge",
+    "ndcg10": 0.7099,
+    "recall100": 0.9483
+   },
+   "ndcg10_vs_baseline": {
+    "delta": -0.0385,
+    "p": 0.00026086366096138687,
+    "ci95": [
+     -0.0591,
+     -0.0183
+    ]
+   },
+   "recall100_vs_baseline": {
+    "delta": -0.0023,
+    "p": 0.7806838974744964,
+    "ci95": [
+     -0.0183,
+     0.014
+    ]
+   }
+  },
+  "nfcorpus": {
+   "n_queries": 323,
+   "ndcg10": 0.3432,
+   "recall100": 0.3232,
+   "baseline": {
+    "name": "bge",
+    "ndcg10": 0.3403,
+    "recall100": 0.3044
+   },
+   "ndcg10_vs_baseline": {
+    "delta": 0.0028,
+    "p": 0.5699652309299346,
+    "ci95": [
+     -0.0069,
+     0.0128
+    ]
+   },
+   "recall100_vs_baseline": {
+    "delta": 0.0187,
+    "p": 0.0015350312654537675,
+    "ci95": [
+     0.0081,
+     0.0312
+    ]
+   }
+  },
+  "arguana": {
+   "n_queries": 1406,
+   "ndcg10": 0.508,
+   "recall100": 0.9808,
+   "baseline": {
+    "name": "bge",
+    "ndcg10": 0.606,
+    "recall100": 0.9858
+   },
+   "ndcg10_vs_baseline": {
+    "delta": -0.098,
+    "p": 1.1341535174988918e-38,
+    "ci95": [
+     -0.1121,
+     -0.0838
+    ]
+   },
+   "recall100_vs_baseline": {
+    "delta": -0.005,
+    "p": 0.16159086386021118,
+    "ci95": [
+     -0.0121,
+     0.0021
+    ]
+   }
+  }
+ }
+}
